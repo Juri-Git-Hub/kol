@@ -1,6 +1,6 @@
 from utility import intersection
 from algorithm_magic import solveTask
-
+from testing import plotSolution
 # test values
 # a = (0, 1)
 # b = (7, 4)
@@ -84,6 +84,7 @@ def linearAlg(list_goals, ball_radius):
 
         candidate_configurations = new_candidate_configurations
 
-    print(candidate_configurations)
-
-    solution = solveTask(candidate_configurations, first_goal, last_goal_lr[0])
+    left_chokepoints, right_chokepoints = solveTask(candidate_configurations, first_goal, last_goal_lr[0])
+    plotSolution(left_chokepoints, right_chokepoints)
+    print(left_chokepoints)
+    print(right_chokepoints)
