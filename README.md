@@ -49,6 +49,25 @@ Wenn man die Chokepoints kennt, muss man nur noch alle Verbindungen zwischen ein
 n bisschen schneller, aber das geht doch noch besser!
 
 
+Für die Lösung der Aufgabe braucht nicht ein Kanalpolygon, sondern eine einzige Lösung.
+Ist es möglich NUR mit den Chokepoints eine Lösung zu finden?
+
+Es gibt verschiedene Fälle:
+1. Es gibt keine Chokepoints: Man überprüft, ob die engste Stelle des Polygon aus erstem und letztem Tor größer als der Balldurchmesser ist.
+2. Es gibt einen Chokepoint: Man überprüft, ob die Distanz von dem einen Chokepoint zur anderen Verbindungslinie größer als der Balldurchmesser ist.
+
+3. Es gibt zwei Chokepoints:
+Dieser Fall ist komplizierter:
+Wenn man versucht das Polygon zu finden, kommt man aber auf die Lösung.
+Um ein vollständiges Kanalpolygon zu finden, braucht man noch die eingrenzenden Pfosten auf jeder Seite, da sie die Seiten des Polygons mit eingrenzen. (Skizze notwendig) (diese Pfosten kann es, muss es aber nicht, geben)
+
+Eingrenzende Pfosten:
+Diese eingrenzenden Pfosten müssen nicht zwingend die höchsten Pfosten sein (Skizze notwendig). Wie findet man also schnell diese Pfosten?
+Nun, wenn man sich die Linie zwischen dem höchsten Pfosten und einem eingrenzenden Pfosten vorstellt, dann liegt kein Pfosten von diesem Abschnitt mehr über der Linie. 
+Eine Lösung ist es, eine waagerechte Linie, die den höchsten Pfosten berührt, zu ziehen und diese zu "drehen" bis sie den ersten Pfosten berührt. Dieser Pfosten muss ein eingrenzender Pfosten sein, da kein Pfosten über der waagerechten Linie liegt.
+Also berechnet man für jeden Pfosten einen Winkel (Skizze notwendig) und der Pfosten mit dem kleinsten Winkel für jede Seite ist der einschränkende Pfosten.
+
+Wenn man diese waagerechten Linien für beide Chokepoints einzeichnet, ähnelt das einem Schusspfad. Dafür muss man sie natürlich parallel zueinander zeichnen.
 
 
 
