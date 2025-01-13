@@ -68,6 +68,22 @@ Eine Lösung ist es, eine waagerechte Linie, die den höchsten Pfosten berührt,
 Also berechnet man für jeden Pfosten einen Winkel (Skizze notwendig) und der Pfosten mit dem kleinsten Winkel für jede Seite ist der einschränkende Pfosten.
 
 Wenn man diese waagerechten Linien für beide Chokepoints einzeichnet, ähnelt das einem Schusspfad. Dafür muss man sie natürlich parallel zueinander zeichnen.
+Jetzt gibt es zwei Fälle:
+1. der Abstand zwischen den zwei Parallelen ist größer als der Balldurchmesser: dann kann man diese Linien als Lösung überprüfen.
+2. der Abstand zwischen den zwei Parallelen ist geringer als der Balldurchmesser: Dann müssen die Parallelen gedreht werden.
+Wenn man die Parallelen dreht, vergrößert oder verkleinert sich der Abstand. Dies kommt auf die Drehrichtung und die Position der zwei Chokepoints an.
+Wenn der obere Chokepoint rechts vom unteren ist und man im Uhrzeigersinn dreht, dann vergrößert sich der Abstand. Wenn man gegen den Uhrzeigersinn dreht, dann verkleinert er sich. Wenn der obere Chokepoint links vom unteren liegt, dann ist es genau andersherum.
+Die Drehrichtung ist  also einfach herauszufinden.
+Wie kann man berechnen, um wie viel man die Parallelen drehen muss?
+DREIECKE, the answer for everything in life
+
+Wir kennen den Abstand zwischen den zwei Chokepoints und den gesuchten Abstand von den beiden Parallelen. Wenn die Parallelen den richtigen Abstand haben, handelt sich das um ein rechtwinkliges Dreieck. (Skizze notwendig)
+Wir können also den Winkel ausrechnen. (Skizze)
+
+Wenn dieser Schusspfad nicht möglich ist, kann auch die Aufgabe nicht möglich sein, da:
+
+... kein Ahnung habe ich vergessen :)
+
 
 
 
