@@ -6,9 +6,27 @@ Ziel: Es muss überprüft werden, ob man mit einem Schuss durch alle Tore schie�
 
 Linearer Ansatz:
 
-Reihenfolge der Tore (Winkeltest) und Orientierungstest:
+Reihenfolge der Tore (Winkeltest):
 Wenn man durch ein Tor schießt, gibt es immer einen Pfosten, der links vom Schusspfad ist, und einen der rechts ist.
-... fehlt noch
+Wie kann man herausfinden, ob Tore in der richtigen Reihenfolge sind?
+Man berechnet für jeden Pfosten Winkel. Und zwar den Winkel von dem anderen Pfosten des gleichen Tores und einem Pfosten des nächsten Tores. (Skizze notwendig)
+Jetzt betrachtet man für jedes Tor beide Winkel. Die Winkel werden verglichen und beim ersten Tor wird eine Richtung festgelegt.
+
+Es gibt drei Fälle:
+1. Beide Winkel sind größer als 180°: Wenn es das erste Tor ist, wird die Richtung gespeichert. Bei den restlichen Toren muss die Richtung als 180° festgelegt werden. Ansonsten sind die Tore nicht in der richtigen Reihenfolge.
+2. Beide Winkel sind kleiner als 180°: Genau andersherum als bei Fall 1.
+3. Ein Winkel ist größer als 180° und ein Winkel ist kleiner 180°: Es kann keine Aussage über die Richtung gemacht werden. Es kann Möglich sein, muss aber nicht.
+
+Wenn sich die Richtung ändert ist es nicht möglich die Tore mit einem Schuss in der richtigen Reihenfolge zu durchschießen.
+
+Orientierungstest:
+Um die Aufgabe schnell zu lösen, ist es notwendig zu wissen, welcher Pfosten rechts vom Schusspfad ist und welche links. Dafür ist der Orientierungstest zuständig.
+Bei zwei Toren:
+Wichtig: Ob der rechte Pfosten wirklich rechts ist, ist egal solange es einheitlich ist. Bedeutet: alle rechten Pfosten müssen rechts sein, oder alle rechten Pfosten müssen links sein.
+
+
+
+
 
 
 Der Ballradius wird zunächst nicht beachtet.
