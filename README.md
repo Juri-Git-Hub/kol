@@ -23,8 +23,8 @@ Orientierungstest:
 Um die Aufgabe schnell zu lösen, ist es notwendig zu wissen, welcher Pfosten rechts vom Schusspfad ist und welche links. Dafür ist der Orientierungstest zuständig.
 Bei zwei Toren:
 Wichtig: Ob der rechte Pfosten wirklich rechts ist, ist egal solange es einheitlich ist. Bedeutet: alle rechten Pfosten müssen rechts sein, oder alle rechten Pfosten müssen links sein.
-
-
+Beim ersten Tor wird festgelegt, welcher Pfosten rechts und welcher links ist. Die Zuordnung ist egal, muss aber immer gleich erfolgen.
+Nun werden die Pfosten zu Vierecken verbunden. Dem zweiten Tor werden 
 
 
 
