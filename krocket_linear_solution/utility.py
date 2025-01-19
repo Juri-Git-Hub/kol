@@ -2,6 +2,29 @@ from math import degrees, atan2
 import numpy as np
 
 
+def test_orientation(goal1, goal2):
+    intersection_point1 = intersection(goal1[0], goal2[0], goal1[1], goal2[1])
+    intersection_point2 = intersection(goal1[0], goal2[1], goal1[1], goal2[0])
+
+    return_values = []
+
+    if not intersection_point1:
+        l0 = goal1[0]
+        r0 = goal1[1]
+        l1 = goal2[0]
+        r1 = goal2[1]
+        return_values.append([l0, r0, l1, r1])
+
+    if not intersection_point2:
+        l0 = goal1[0]
+        r0 = goal1[1]
+        l1 = goal2[1]
+        r1 = goal2[0]
+        return_values.append([l0, r0, l1, r1])
+
+    return return_values
+
+
 def calculate_angle(a, x, b):
     # this function calculates the angle for three given points
     x1, y1 = a

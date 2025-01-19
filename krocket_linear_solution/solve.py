@@ -1,36 +1,7 @@
 from utility import intersection
 from algorithm_magic import solveTask
-from testing import plotSolution
-# test values
-# a = (0, 1)
-# b = (7, 4)
-# c = (1, 3)
-# schnittpunkt = perpendicularIntersectionPoint(b, a, c)
-# crossProduct([a, b], c)
-# print("Senkrechter Schnittpunkt auf AB:", schnittpunkt)
-
-
-def test_orientation(goal1, goal2):
-    intersection_point1 = intersection(goal1[0], goal2[0], goal1[1], goal2[1])
-    intersection_point2 = intersection(goal1[0], goal2[1], goal1[1], goal2[0])
-
-    return_values = []
-
-    if not intersection_point1:
-        l0 = goal1[0]
-        r0 = goal1[1]
-        l1 = goal2[0]
-        r1 = goal2[1]
-        return_values.append([l0, r0, l1, r1])
-
-    if not intersection_point2:
-        l0 = goal1[0]
-        r0 = goal1[1]
-        l1 = goal2[1]
-        r1 = goal2[0]
-        return_values.append([l0, r0, l1, r1])
-
-    return return_values
+from testing import plotTwoLines
+from utility import test_orientation
 
 
 def linearAlg(list_goals, ball_radius):
@@ -84,7 +55,5 @@ def linearAlg(list_goals, ball_radius):
 
         candidate_configurations = new_candidate_configurations
 
-    left_chokepoints, right_chokepoints = solveTask(candidate_configurations, first_goal, last_goal_lr[0])
-    plotSolution(left_chokepoints, right_chokepoints)
-    print(left_chokepoints)
-    print(right_chokepoints)
+    path = solveTask(candidate_configurations, first_goal, last_goal_lr[0], ball_radius, list_goals)
+    return path

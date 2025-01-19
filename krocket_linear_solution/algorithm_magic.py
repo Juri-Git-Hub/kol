@@ -1,7 +1,9 @@
 from utility import crossProduct, perpendicularIntersectionPoint, lengthVector, intersection
+from utility import test_orientation
+from kol_krocket.krocket_linear_solution.linear import constructShotPath
 
 
-def solveTask(configurations, first_goal, last_goal):
+def solveTask(configurations, first_goal, last_goal, ball_radius, list_goals):
     # within these two lines is the solution, if there is one
     # ll and rr are the boundaries of the shot
     ll_line = (first_goal[0], last_goal[0])
@@ -18,78 +20,110 @@ def solveTask(configurations, first_goal, last_goal):
         right_distances = getDistances(right_posts, rr_line, left=False)
 
         # die Begrenzenden Linen bekommen
-        left_chokepoints = chokepoints(left_distances, first_goal, last_goal, left=True)
-        right_chokepoints = chokepoints(right_distances, first_goal, last_goal, left=False)
+        left_choke_point = getChokePoint(left_distances)[0]
+        right_choke_point = getChokePoint(right_distances)[0]
 
-        # überprüfen, ob es mögliche mit dieser Konfiguration
-        is_possible = possible(left_chokepoints, right_chokepoints)
-        if is_possible:
-            return left_chokepoints, right_chokepoints
+        # lr orientation für die Chokepoints bekommen -> in welche richtung schießt man durch die Chokepoints
+        orientations = test_orientation(first_goal, (left_choke_point, right_choke_point))
+        choke_point_orientation = [orientation[2:4] for orientation in orientations]
 
-    return None, None
+        # jede Orientierung der Choke points durchgehen
+        for p_orientation in choke_point_orientation:
+            # wenn der 1. Pfosten weiter rechts ist, dann ist above true
+            # above legt fest, wie das Dreieck konstruiert wird
+            above = False
+            if p_orientation[0][0] > p_orientation[1][0]:
+                above = True
+            # das Dreieck konstruieren um den dritten Punkt herauszubekommen
+            shotPathPoint = constructShotPath(p_orientation[0], p_orientation[1], ball_radius * 2, above_line=above)
+
+            # TODO wtf??? hardcoded numbers????
+            xMin = -100
+            xMax = 300
+            # der shotPath ist immer die Verbindung aus dem dritten Punkt und dem zweiten
+            # diese Strecke muss verlängert werden, sodass sie länger als alle Tore ist
+            shotPath = extend_line_linear(p_orientation[1], shotPathPoint, xMin, xMax)
+
+            # die Parallele wird gefunden und auch verlängert
+            parallel = getParallel(shotPath[0], shotPath[1], p_orientation[0])
+            parallel_path = extend_line_linear(parallel[0], parallel[1], xMin, xMax)
+
+            # mit beiden Linien kann überprüft werden, ob sie durch alle Tore gehen.
+            is_possible = True
+            for goal in list_goals:
+                intersectionPoint1 = intersection(goal[0], goal[1], shotPath[0], shotPath[1])
+                intersectionPoint2 = intersection(goal[0], goal[1], parallel_path[0], parallel_path[1])
+                if not intersectionPoint1 or not intersectionPoint2:
+                    is_possible = False
+
+            # wenn sie durch alle Tore gehen, ist eine Lösung gefunden.
+            # die Strecke zwischen den Parallelen wird zurückgegeben
+            if is_possible:
+                trueShotPath = middle_line_between(shotPath, parallel_path)
+                return trueShotPath
+
+    return None
 
 
-def chokepoints(lines, first_goal, last_goal, left):
-    # den maximalen Abstand bekommen
+def midpoint(p, q):
+    """Gibt den Mittelpunkt zwischen den zwei Punkten p und q zurück."""
+    return ((p[0] + q[0]) / 2.0,
+            (p[1] + q[1]) / 2.0)
+
+
+def middle_line_between(lineA, lineB):
+    """
+    Erzeugt die Strecke zwischen zwei parallelen Linien aka der eigentliche Schusspfad
+    lineA = (p1, p2) und lineB = (q1, q2),
+    indem die Mittelpunkte der jeweiligen Endpunkte verbunden werden. Dafür ist die Reihenfolge der Pfosten wichtig.
+
+    Rückgabe: (M1, M2) = die beiden Endpunkte der Mittellinie.
+    """
+    (p1, p2) = lineA
+    (q1, q2) = lineB
+
+    # M1 = Mittelpunkt von p1 und q1
+    m1 = midpoint(p1, q1)
+    # M2 = Mittelpunkt von p2 und q2
+    m2 = midpoint(p2, q2)
+
+    return m1, m2
+
+
+def getParallel(p1, p2, p3):
+    """
+    Erzeugt die Parallele von der Strecke (p1, p2), welche durch den Punkt p3 verläuft.
+    :param p1: 1. Punkt der Strecke
+    :param p2: 2. Punkt der Strecke
+    :param p3: Punkt durch den die Parallele läuft.
+    :return: die Parallele (p3, p4)
+    """
+    # Richtungsvektor der Original-Linie
+    vx = p2[0] - p1[0]
+    vy = p2[1] - p1[1]
+
+    # Falls p1 == p2, ist die Original-Linie degeneriert
+    if vx == 0 and vy == 0:
+        raise ValueError("Die Original-Linie hat Länge 0 (p1 == p2). Keine eindeutige Richtung!")
+
+    # Bilden der parallelen Linie: p3 -> p4
+    p4 = (p3[0] + vx, p3[1] + vy)
+
+    return p3, p4
+
+
+def getChokePoint(lines):
+    """
+    Findet den Pfosten mit dem größten Abstand
+    :param lines: alle Pfosten mit ihrem Abstand
+    :return: den Pfosten mit dem größten Abstand
+    """
     maxValue, maxIndex = maxDistance(lines)
-    print(lines)
-    # wenn es keinen maximalen Abstand gibt, dann ist die begrenzende Linie die Linie von dem ersten und letzten Pfosten
+
     if maxValue == 0:
-        return [[first_goal, last_goal]]
+        return None
     else:
-        # die Pfosten werden in zwei Gruppen aufgeteilt. Die Grenze ist der Pfosten mit dem größten Abstand
-        first_posts = lines[0:maxIndex + 1]
-        last_posts = lines[maxIndex:]
-
-        # bei der zweiten Gruppe muss die Reihenfolge der Elemente umgekehrt werden
-        last_posts = last_posts[::-1]
-
-        # für jede Gruppe wird die Linie ermittelt, welche
-        first_line = getLine(first_posts, left, first_goal[0])
-        last_line = getLine(last_posts, left, first_goal[1])
-        return [first_line, last_line]
-
-
-def getLine(posts, left, line_post):
-    # die neue Linie ist die vom ersten zum letzten Pfosten
-    new_line = [line_post, posts[-1][0]]
-
-    # alle anderen Pfosten werden in eine Liste gespeichert
-    list_posts = [line[0] for line in posts[:-1]]
-
-    # die Entfernung der Pfosten zu der neuen Linie wird berechnet
-    distances = getDistances(list_posts, new_line, left=left)
-
-    # findet die maximale Entfernung
-    maxValue, maxIndex = maxDistance(distances)
-
-    # wenn die maximale Entfernung null ist, kann die Linie zurückgegeben werden
-    if maxValue == 0:
-        return new_line
-    else:
-        # die neue Linie geht von dem Pfosten mit der größten Entfernung zu dem letzten Pfosten
-        test_line = [posts[maxIndex + 1][0], posts[-1][0]]
-
-        # uns interessieren nur noch die Pfosten, welche innerhalb der Pfosten von der Linie Liegen
-        updated_posts = posts[maxIndex:]
-        return recursive(test_line, updated_posts, left)
-
-
-def recursive(line, posts, left):
-    # die Liste der Pfosten
-    list_posts = [post[0] for post in posts[1:-1]]
-    # die Abstände der Pfosten zu den Linien
-    distances = getDistances(list_posts, line, left=left)
-    # der maximale Abstand
-    maxValue, maxIndex = maxDistance(distances)
-    if maxValue == 0:
-        return line
-    else:
-        # neue Linie und neue Pfosten
-        new_line = [posts[maxIndex][0], posts[-1][0]]
-        new_posts = posts[maxIndex:]
-
-        return recursive(new_line, new_posts, left=left)
+        return lines[maxIndex]
 
 
 def maxDistance(distances):
@@ -131,19 +165,32 @@ def getDistances(list_posts, line, left):
     return post_distances
 
 
-def possible(left_lines, right_lines):
-    # jede linke Linie mit jeder rechten Linie überprüfen
-    for line in left_lines:
-        p1, p2 = line
-        q1, q2 = right_lines[0]
-        # wenn sich die beiden Linien überschneiden ist es unmöglich mit einem Schuss durchzuschießen
-        intersection1 = intersection(p1, p2, q1, q2)
+def extend_line_linear(point1, point2, x_min, x_max):
+    """
+    Erstellt eine lineare Funktion aus einer Linie, die durch zwei Punkte definiert ist,
+    und berechnet zwei neue Punkte anhand der vorgegebenen x-Werte (x_min und x_max).
 
-        c1, c2 = right_lines[1]
-        # wenn sich die beiden Linien überschneiden ist es unmöglich mit einem Schuss durchzuschießen
-        intersection2 = intersection(p1, p2, c1, c2)
+    :param point1: Tuple (x1, y1) - erster Punkt
+    :param point2: Tuple (x2, y2) - zweiter Punkt
+    :param x_min: float - der kleinere x-Wert für die verlängerte Linie
+    :param x_max: float - der größere x-Wert für die verlängerte Linie
+    :return: Tuple ((x_min, y_min), (x_max, y_max)) - die neuen Endpunkte der verlängerten Linie
+    """
+    # Koordinaten der Punkte
+    x1, y1 = point1
+    x2, y2 = point2
 
-        if intersection1 or intersection2:
-            return False
+    # Berechnung der Steigung m
+    if x2 == x1:
+        raise ValueError("Die Linie ist vertikal. Verwende eine andere Methode.")
 
-    return True
+    m = (y2 - y1) / (x2 - x1)
+
+    # Berechnung des Achsenabschnitts b
+    b = y1 - m * x1
+
+    # Berechnung der neuen Punkte basierend auf x_min und x_max
+    y_min = m * x_min + b
+    y_max = m * x_max + b
+
+    return (x_min, y_min), (x_max, y_max)

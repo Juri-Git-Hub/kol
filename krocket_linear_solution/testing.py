@@ -14,25 +14,39 @@ def plotPerpendicularIntersection(a, b, c, intersection):
     plt.show()
 
 
-def plotTwoLines(a, b, c):
-    # Extracting x and y values for each line
-    line_ab_x = [a[0], b[0]]
-    line_ab_y = [a[1], b[1]]
+def plotTwoLines(points_line1, points_line2):
+    """
+    Plottet zwei Linien basierend auf Listen von (x, y)-Punkten.
 
-    # Plotting the lines
-    plt.figure(figsize=(8, 6))
-    plt.plot(line_ab_x, line_ab_y, label="Line AB", marker='o')
-    plt.scatter(*c, color="red")
-    # Adding labels and legend
-    plt.title("Lines AB and CD")
-    plt.xlabel("X-axis")
-    plt.ylabel("Y-axis")
-    plt.axhline(0, color='black', linewidth=0.5, linestyle='--')
-    plt.axvline(0, color='black', linewidth=0.5, linestyle='--')
+    Parameter:
+    ----------
+    points_line1 : Liste/Array von (x, y)-Tupeln
+        Die Stützstellen für die erste Linie.
+    points_line2 : Liste/Array von (x, y)-Tupeln
+        Die Stützstellen für die zweite Linie.
+    """
+    # Entpacke x- und y-Werte für Linie 1
+    x_values_line1 = [point[0] for point in points_line1]
+    y_values_line1 = [point[1] for point in points_line1]
+
+    # Entpacke x- und y-Werte für Linie 2
+    x_values_line2 = [point[0] for point in points_line2]
+    y_values_line2 = [point[1] for point in points_line2]
+
+    plt.figure(figsize=(8, 5))
+
+    # Linie 1
+    plt.plot(x_values_line1, y_values_line1, label='Linie 1', color='blue', marker='o')
+    # Linie 2
+    plt.plot(x_values_line2, y_values_line2, label='Linie 2', color='red', marker='x')
+
+    # Achsenbeschriftungen, Titel und Legende
+    plt.xlabel('X-Achse')
+    plt.ylabel('Y-Achse')
+    plt.title('Zwei Linien basierend auf (x, y)-Punkten')
     plt.legend()
-    plt.grid(True)
 
-    # Displaying the plot
+    # Diagramm anzeigen
     plt.show()
 
 
@@ -79,8 +93,8 @@ def plotSolution(lines1, lines2):
 
     # Linien aus der ersten Gruppe plotten
     for line in lines1:
-        x_coords, y_coords = zip(*line)
-        plt.plot(x_coords, y_coords, label="Line Group 1", color="blue")
+        x_coord, y_coord = zip(*line)
+        plt.plot(x_coord, y_coord, label="Line Group 1", color="blue")
 
     # Linien aus der zweiten Gruppe plotten
     for line in lines2:
@@ -102,8 +116,26 @@ def plotSolution(lines1, lines2):
     plt.show()
 
 
-left = [[(20, 20), (12.703448275862069, 24.44137931034483), 8.541985556144386], [(33, 15), (13.997241379310346, 26.566896551724138), 22.246301513610813], [(0, 60), (25.06206896551724, 44.744827586206895), -29.339863431974194], [(120, 70), (61.9448275862069, 105.33793103448276), 67.96449377280098], [(126, 149), (98.65379310344828, 165.6455172413793), 32.013876301723734], [(123, 167), (105.83724137931034, 177.44689655172414), 20.092235590757014], [(156, 202), (130.30344827586208, 217.64137931034483), 30.082644784682394]]
-right = [[(14, 3), (13.229270364393102, 3.9733627792406354), -1.2415551825085325], [(23, 16), (25.087845069226198, 13.363237917268325), 3.3632738981569172], [(60, 0), (40.042444576573516, 25.204612248364903), -32.149284549886424], [(48, 16), (40.45372462413998, 25.53027265777627), -12.156165883199737], [(238, 121), (208.3359551516181, 158.4630425549987), -47.785302282652324], [(251, 162), (236.28014949460632, 180.58985815000426), -23.711955316641824], [(206, 183), (218.84187547778816, 166.78185679096237), 20.686757477571746]]
-lines = [[(10, 20), (136, 227)], [(281, 216), (12, 3)]]
+def plot_triangle(p1, p2, p3):
+    """
+    Zeichnet das Dreieck p1->p2->p3->p1 mit matplotlib.
+    """
+    x_coords = [p1[0], p2[0], p3[0], p1[0]]
+    y_coords = [p1[1], p2[1], p3[1], p1[1]]
 
-plotPerpLines(left, right, lines)
+    plt.figure(figsize=(5,5))
+    plt.title("Rechtwinkliges Dreieck (Hypotenuse = p1->p2, rechter Winkel bei p3)")
+    plt.plot(x_coords, y_coords, marker='o')
+    plt.grid(True)
+    plt.axis('equal')
+
+    # Achsen-Puffer
+    all_x = [p1[0], p2[0], p3[0]]
+    all_y = [p1[1], p2[1], p3[1]]
+    min_x, max_x = min(all_x), max(all_x)
+    min_y, max_y = min(all_y), max(all_y)
+    buffer = 1.0
+    plt.xlim(min_x - buffer, max_x + buffer)
+    plt.ylim(min_y - buffer, max_y + buffer)
+
+    plt.show()
