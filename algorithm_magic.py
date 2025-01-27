@@ -1,6 +1,6 @@
 from utility import crossProduct, perpendicularIntersectionPoint, lengthVector, intersection
 from utility import test_orientation
-from kol_krocket.krocket_linear_solution.linear import constructShotPath
+from linear import constructShotPath
 
 
 def solveTask(list_goals, ball_radius):
@@ -33,6 +33,10 @@ def solveTask(list_goals, ball_radius):
     orientations = test_orientation(first_goal, (left_choke_point, right_choke_point))
     choke_point_orientation = [orientation[2:4] for orientation in orientations]
 
+    # TODO wtf??? hardcoded numbers????
+    xMin = first_goal[0][0] - 200
+    xMax = last_goal[1][0] + 200
+
     # jede Orientierung der Choke points durchgehen
     for p_orientation in choke_point_orientation:
         # wenn der 1. Pfosten weiter rechts ist, dann ist above true
@@ -42,9 +46,7 @@ def solveTask(list_goals, ball_radius):
             above = True
         # das Dreieck konstruieren um den dritten Punkt herauszubekommen
         shotPathPoint = constructShotPath(p_orientation[0], p_orientation[1], ball_radius * 2, above_line=above)
-        # TODO wtf??? hardcoded numbers????
-        xMin = first_goal[0][0] - 200
-        xMax = last_goal[1][0] + 200
+
         print(p_orientation)
         print(shotPathPoint)
         # der shotPath ist immer die Verbindung aus dem dritten Punkt und dem zweiten

@@ -9,7 +9,7 @@ def main(task):
     else:
         exercises = [int(task)]
 
-    exercises = [4]
+    # exercises = [4, 5]
 
     # für jede ausgewählte Beispielaufgabe das Programm durchführen
     for ex in exercises:

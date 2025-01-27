@@ -153,9 +153,10 @@ for idx, (post1, post2) in enumerate(data):
     plt.plot([post2[0]], [post2[1]], 'go-', label='Zweiter Pfosten' if idx == 0 else "")  # Grüne Punkte
 
 
-points_line1 = ((-181, 63.728234249323165), (9181, 4705.107650938998))
-points_line2 = ((-181, 119.53562279131239), (9181, 4760.915039480987))
-#points_line3 = [(30538, 6831), (30812, 10508)]
+points_line1 = ((-181, 226.08677593174673), (9181, 2793.595307588684))
+
+points_line2 = ((-181, 1942.3076323119776), (9181, 4636.686016713092))
+# points_line3 = [(30538, 6831), (30812, 10508)]
 
 x_values_line1 = [point[0] for point in points_line1]
 y_values_line1 = [point[1] for point in points_line1]
@@ -164,15 +165,15 @@ y_values_line1 = [point[1] for point in points_line1]
 x_values_line2 = [point[0] for point in points_line2]
 y_values_line2 = [point[1] for point in points_line2]
 
-#x_values_line3 = [point[0] for point in points_line3]
-#y_values_line3 = [point[1] for point in points_line3]
+# x_values_line3 = [point[0] for point in points_line3]
+# y_values_line3 = [point[1] for point in points_line3]
 
 
 # Linie 1
 plt.plot(x_values_line1, y_values_line1, label='Linie 1', color='blue', marker='o')
 # Linie 2
 plt.plot(x_values_line2, y_values_line2, label='Linie 2', color='yellow', marker='x')
-#plt.plot(x_values_line3, y_values_line3, label='Linie 2', color='green', marker='.')
+# plt.plot(x_values_line3, y_values_line3, label='Linie 2', color='green', marker='.')
 plt.title("Pfosten Positionen")
 plt.xlabel("X-Koordinate")
 plt.ylabel("Y-Koordinate")

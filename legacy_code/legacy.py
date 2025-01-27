@@ -1,3 +1,66 @@
+def solveTask(list_goals, ball_radius):
+    first_goal = list_goals.pop(0)
+    last_goal = list_goals.pop(-1)
+    # within these two lines is the solution, if there is one
+    # ll and rr are the boundaries of the shot
+    ll_line = (first_goal[0], last_goal[0])
+    rr_line = (first_goal[1], last_goal[1])
+
+    # jede mögliche Konfiguration durchgehen
+    # todo eigentlich für mehrere konfigurationen??
+    # for configuration in configurations:
+    # linke und rechte Pfosten aufteilen
+    left_posts = [goal[0] for goal in list_goals]
+    right_posts = [goal[1] for goal in list_goals]
+
+    # Entfernung von den Pfosten zu jeweils einer Linie
+    left_distances = getDistances(left_posts, ll_line, left=True)
+    right_distances = getDistances(right_posts, rr_line, left=False)
+    from testing import plotPerpLines
+    print(left_posts)
+    print(right_posts)
+    plotPerpLines(left_distances[0:10], right_distances[0:10], lines=[((0, 0), (1, 1))])
+    # die Begrenzenden Linen bekommen
+    left_choke_point = getChokePoint(left_distances)[0]
+    right_choke_point = getChokePoint(right_distances)[0]
+
+    # lr orientation für die Chokepoints bekommen -> in welche richtung schießt man durch die Chokepoints
+    orientations = test_orientation(first_goal, (left_choke_point, right_choke_point))
+    choke_point_orientation = [orientation[2:4] for orientation in orientations]
+
+    # 1. Parallelen von den Grundlinien durch die Chokepoints zeichnen
+    l_parallel = getParallel(ll_line[0], ll_line[1], left_choke_point)
+    r_parallel = getParallel(rr_line[0], rr_line[1], right_choke_point)
+
+    # TODO wtf??? hardcoded numbers????
+    xMin = first_goal[0][0] - 200
+    xMax = last_goal[1][0] + 200
+    left_parallel = extend_line_linear(l_parallel[0], l_parallel[1], xMin, xMax)
+    right_parallel = extend_line_linear(r_parallel[0], r_parallel[1], xMin, xMax)
+
+    # 2. Schauen an welchem Tor die Parallelen einen geringeren Abstand haben
+    first_goal_intersection1 = intersection(first_goal[0], first_goal[1], left_parallel[0], left_parallel[1])
+    first_goal_intersection2 = intersection(first_goal[0], first_goal[1], right_parallel[0], right_parallel[1])
+    last_goal_intersection1 = intersection(last_goal[0], last_goal[1], left_parallel[0], left_parallel[1])
+    last_goal_intersection2 = intersection(last_goal[0], last_goal[1], right_parallel[0], right_parallel[1])
+
+    # 3. Diesen Abstand messen
+    if (first_goal_intersection1 and first_goal_intersection2) and (last_goal_intersection1 and last_goal_intersection2):
+        first_length = lengthVector((first_goal_intersection1, first_goal_intersection2))
+        last_length = lengthVector((last_goal_intersection1, last_goal_intersection2))
+
+        smallest_distance = min(first_length, last_length)
+
+        # 5. Wenn der Abstand größer als der Balldurchmesser ist, dann die Parallelen benutzen und schauen ob das klappt
+        if smallest_distance > ball_radius * 2:
+            print("works with distance")
+            print(left_parallel)
+            print(right_parallel)
+            return middle_line_between(left_parallel, right_parallel)
+    else:
+        return chokePointOrientation(list_goals, choke_point_orientation, ball_radius)
+
+
 def chokepoints(lines, first_goal, last_goal, left):
     # den maximalen Abstand bekommen
     maxValue, maxIndex = maxDistance(lines)
